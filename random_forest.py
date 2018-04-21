@@ -1,6 +1,8 @@
 import sklearn
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib
+import pandas as pd
+import numpy as np
 from import_data import import_data
 
 columns = ['Using IP Address', 'Long URL', 'Using URL Shortening', 'URL has @ Symbol',
@@ -22,11 +24,14 @@ y[y < 1] = 0
 
 X = train_data[columns[:30]]
 
-rf = RandomForestClassifier()
+rf = RandomForestClassifier(200)
 rf.fit(X, y)
 score = rf.score(X, y)
 
 print('Score for training data:', score)
+df = pd.DataFrame(list(zip(X.columns, np.transpose(rf.feature_importances_))))
+df.columns = ['Feature', 'Weight']
+print(df.sort_values('Weight', ascending=False))
 
 X_test = test_data[columns[:30]]
 y_test = test_data['Safe Website']
@@ -36,6 +41,7 @@ rf.predict(X_test)
 score = rf.score(X_test, y_test)
 
 print('Score for test data:', score)
+print('Predicted Probabilities:', rf.predict_proba(X_test))
 
 
 
