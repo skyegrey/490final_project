@@ -1,7 +1,13 @@
 import csv
+import numpy as np
 
 
 def import_data(csv_string):
+    """
+    Takes in a csv string, returns a list of values as integers
+    :param csv_string: name of the csv file to take in
+    :return: a numpy array of feature values
+    """
     values = []
     with open(csv_string, 'r') as csv_file:
         reader = csv.reader(csv_file, delimiter=',')
@@ -10,7 +16,8 @@ def import_data(csv_string):
                 row[i] = int(row[i])
             values.append(row)
 
-    for i in range(0, 100):
-        print(values[i])
+    values = np.array(values)
+
+    print(values)
 
     return values
