@@ -25,6 +25,7 @@ test_data = import_data('test.csv')
 #    plt.ylabel('Frequency')
 #    plt.show()
 
+
 y = train_data['Safe Website']
 y[y < 1] = 0
 
@@ -40,11 +41,24 @@ print("Score on Training Data:", score, "\n\n\n")
 
 
 variables = pd.DataFrame(list(zip(X.columns, np.transpose(regression.coef_))))
+variables.columns = ['Feature', 'Weight']
 print("Variable and Weights:\n", variables, "\n\n\n")
+
 
 regression.predict(test_data[columns[:30]])
 y = test_data['Safe Website']
 y[y < 1] = 0
 score = regression.score(test_data[columns[:30]], y)
-print("Percentage Accuracy on Test Data:", score)
+print("Percentage Accuracy on Test Data:", score, "\n\n\n")
+
+print(variables.sort_values('Weight', ascending=False))
+
+relevant_columns = [13, 5, 7, 15, 18, 21]
+
+for i in relevant_columns:
+    pd.crosstab(train_data[columns[i]], train_data['Safe Website']).plot(kind='bar')
+    plt.title(columns[i])
+    plt.xlabel(columns[i])
+    plt.ylabel('Frequency')
+    plt.show()
 
