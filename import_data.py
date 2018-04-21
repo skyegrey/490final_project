@@ -7,7 +7,7 @@ def import_data(csv_string):
     """
     Takes in a csv string, returns a list of values as integers
     :param csv_string: name of the csv file to take in
-    :return: a numpy array of feature values
+    :return: data frame containing integer values of feature with labeled columns
     """
     values = []
     with open(csv_string, 'r') as csv_file:
