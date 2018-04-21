@@ -17,6 +17,7 @@ columns = ['Using IP Address', 'Long URL', 'Using URL Shortening', 'URL has @ Sy
 
 train_data = import_data('train.csv')
 test_data = import_data('test.csv')
+
 # for i in range(0, 30):
 #    pd.crosstab(train_data[columns[i]], test_data['Safe Website']).plot(kind='bar')
 #    plt.title(columns[i])
@@ -25,18 +26,25 @@ test_data = import_data('test.csv')
 #    plt.show()
 
 y = train_data['Safe Website']
+y[y < 1] = 0
 
 X = train_data[columns[:30]]
 
 regression = LogisticRegression()
 regression.fit(X, y)
 score = regression.score(X, y)
+guessing = y.mean()
+
+print("Score by guessing always unsafe:", guessing)
 print("Score on Training Data:", score, "\n\n\n")
+
 
 variables = pd.DataFrame(list(zip(X.columns, np.transpose(regression.coef_))))
 print("Variable and Weights:\n", variables, "\n\n\n")
 
 regression.predict(test_data[columns[:30]])
-score = regression.score(test_data[columns[:30]], test_data['Safe Website'])
+y = test_data['Safe Website']
+y[y < 1] = 0
+score = regression.score(test_data[columns[:30]], y)
 print("Percentage Accuracy on Test Data:", score)
 
