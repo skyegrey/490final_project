@@ -1,5 +1,6 @@
 import csv
 import numpy as np
+import pandas as pd
 
 
 def import_data(csv_string):
@@ -17,7 +18,17 @@ def import_data(csv_string):
             values.append(row)
 
     values = np.array(values)
+    value_table = pd.DataFrame(values)
+    value_table.columns = ['Using IP Address', 'Long URL', 'Using URL Shortening', 'URL has @ Symbol',
+                           'Redirect Using //', 'Adding Prefix or Suffix to Domain', 'Subdomain and Multisubdomains',
+                           'HTTPS', 'Domain Registration Length', 'Favicon', 'Using Non-standard Port',
+                           'Existence of HTTPS Token in Domain', 'Request URL', 'URL Anchor',
+                           'Links in metascript and Link Tabs', 'Server Form Handler',
+                           'Submitting Information to Email', 'Abnormal URL', 'Website Forwarding',
+                           'Status Bar Customization', 'Disabling Right Click', 'Using Pop-up Window',
+                           'IFrame Redirection', 'Age of Domain', 'DNS Record', 'Website Traffic', 'Page Rank',
+                           'Google Index', 'Number of Links Pointing to Page', 'Statistical Reports Based Feature',
+                           'Safe Website']
+    # print(value_table)
 
-    print(values)
-
-    return values
+    return value_table
