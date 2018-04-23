@@ -20,6 +20,7 @@ column_dict = {}
 for i in range(0,30):
     column_dict[i] = columns[i]
 
+# Getting the data
 
 training_data = import_data('train.csv')
 test_data = import_data('test.csv')
@@ -32,20 +33,58 @@ y = training_data["Safe Website"]
 y[y<1] = 0
 X = training_data[columns[:30]]
 
+#################################################################################
 
-model = svm.SVC(kernel = 'linear', C=1.0)
-model.fit(X,y)
+# Building the linear model
+linear_model = svm.SVC(kernel = 'linear', C=1.0)
+linear_model.fit(X,y)
 
-variables = pd.DataFrame(list(zip(X.columns, np.transpose(model.coef_))))
-variables.columns = ['Feature', 'Weight']
-print("Variable and Weights:\n", variables, "\n\n\n")
-print("Percentage Accuracy on Test Data:",model.score(X_test,y_test))
+# Printing variable weights and accuracy on test data
+
+linear_variables = pd.DataFrame(list(zip(X.columns, np.transpose(linear_model.coef_))))
+linear_variables.columns = ['Feature', 'Weight']
+#print("Variable and Weights:\n", linear_variables, "\n\n\n")
+#print("Percentage Accuracy on Test Data:",linear_model.score(X_test,y_test))
+
+################################################################################
+
+# Choosing 5 random sample of 10% of the training data to test a polynomial kernel
+# For each sample, test different polynomial kernels (degree from 1 to 20)
+# Report degree of kernel and percentage accuracy
+
+list_of_colors = ["green","red","blue","orange","teal"]
+for j in range(0,5):
+
+    partial = training_data.sample(frac=.10, replace=True)
+    X_partial = partial[columns[:30]]
+    y_partial = partial["Safe Website"]
+    x_value = []
+    y_value = []
+
+    for i in range(1,21):
+        poly_model = svm.SVC(kernel = 'poly', degree=i, C=1.0)
+        poly_model.fit(X,y)
+
+        print("Using polynomial with degree:",i)
+        print("Percentage Accuracy on Test Data:",poly_model.score(X_partial,y_partial))
+        print("")
+
+        x_value.append(i)
+        y_value.append(poly_model.score(X_partial,y_partial))
+
+        plt.scatter(x_value,y_value, c=list_of_colors[j])
+
+plt.show()
+
+################################################################################
+
+
+# Used for determining feature importance by running SVM with 2 features
+# best_pair_list prints 15 distinct pairs of feature indices, ordered by best accuracy based on test data
 
 score_list = []
 
 #for i in range(30):
-    #print("It's working")
-    #print(i)
     #for j in range(i+1,30):
         #X = training_data[[columns[i],columns[j]]]
         #X_test = test_data[[columns[i],columns[j]]]
@@ -53,28 +92,14 @@ score_list = []
         #score_list.append(list([model.score(X_test,y_test),column_dict[i],column_dict[j]]))
 
 #score_list.sort(reverse=True)
-
-
 best_pair_list = []
 repeats = []
 
 #for item in score_list:
-
     #i = item[1]
     #j = item[2]
 
     #if i not in repeats and j not in repeats:
         #best_pair_list.append(item)
-
         #repeats.append(i)
         #repeats.append(j)
-
-
-#print(best_pair_list)
-
-#model = svm.SVC(kernel = 'linear', C=1.0)
-
-#X = training_data[[columns[5],columns[7],columns[13],columns[27],columns[6],columns[25],columns[8],columns[29]]]
-#X_test = test_data[[columns[5],columns[7],columns[13],columns[27],columns[6],columns[25],columns[8],columns[29]]]
-#model.fit(X,y)
-#print(model.score(X,y))
