@@ -4,6 +4,9 @@ import matplotlib
 import pandas as pd
 import numpy as np
 from import_data import import_data
+from sklearn import tree
+from sklearn.tree import export_graphviz
+import graphviz
 
 columns = ['Using IP Address', 'Long URL', 'Using URL Shortening', 'URL has @ Symbol',
            'Redirect Using //', 'Adding Prefix or Suffix to Domain', 'Subdomain and Multisubdomains',
@@ -24,9 +27,21 @@ y[y < 1] = 0
 
 X = train_data[columns[:30]]
 
-rf = RandomForestClassifier(200)
+for i in range(1, 4):
+    selectedSamples = train_data.sample(frac=.10, replace=True)
+    X_partial = selectedSamples[columns[:30]]
+    y_partial = selectedSamples['Safe Website']
+    dtc = tree.DecisionTreeClassifier(max_features="auto", max_depth=3)
+    dtc = dtc.fit(X_partial, y_partial)
+
+    dot_data = tree.export_graphviz(dtc, feature_names=X.columns, out_file=None)
+    graph = graphviz.Source(dot_data)
+    graph.render("Depth3-" + str(i) + " 10% of Samples, with Replacement")
+
+rf = RandomForestClassifier(200, max_depth=3)
 rf.fit(X, y)
 score = rf.score(X, y)
+
 
 print('Score for training data:', score)
 df = pd.DataFrame(list(zip(X.columns, np.transpose(rf.feature_importances_))))
